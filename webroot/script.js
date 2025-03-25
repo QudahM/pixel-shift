@@ -1,13 +1,6 @@
-// Color Puzzle Game: Full JS Logic from Scratch
-
 class ColorPuzzle {
   constructor() {
-    this.gridSize = 4;
-    this.colors = ["red", "blue", "yellow"];
-    this.targetPattern = this.loadDailyPattern();
-    this.currentPattern = [...this.targetPattern];
-    this.selectedTile = null;
-    this.moveCount = 0;
+    this.difficultySelect = document.getElementById("difficulty");
 
     this.grid = document.getElementById("puzzle-grid");
     this.targetGrid = document.getElementById("target-grid");
@@ -16,15 +9,43 @@ class ColorPuzzle {
     this.submitBtn = document.getElementById("submit-btn");
     this.leaderboard = document.getElementById("leaderboard");
 
-    this.buildGrid();
-    this.renderTargetPattern();
-    this.shuffleTiles();
+    this.difficultySelect.addEventListener("change", () => this.applyDifficulty());
+
+    const savedDifficulty = localStorage.getItem("difficulty");
+    if (savedDifficulty) this.difficultySelect.value = savedDifficulty;
+
+    this.applyDifficulty();
     this.bindEvents();
     this.listenForLeaderboardUpdates();
   }
 
+  applyDifficulty() {
+    const mode = this.difficultySelect.value;
+    localStorage.setItem("difficulty", mode);
+
+    if (mode === "easy") {
+      this.gridSize = 3;
+      this.colors = ["red", "blue"];
+    } else if (mode === "medium") {
+      this.gridSize = 4;
+      this.colors = ["red", "blue", "yellow"];
+    } else if (mode === "hard") {
+      this.gridSize = 5;
+      this.colors = ["red", "blue", "yellow", "green"];
+    }
+
+    this.targetPattern = this.loadDailyPattern();
+    this.currentPattern = [...this.targetPattern];
+    this.selectedTile = null;
+    this.moveCount = 0;
+
+    this.buildGrid();
+    this.renderTargetPattern();
+    this.shuffleTiles();
+  }
+
   loadDailyPattern() {
-    const seed = this.getDaySeed();
+    const seed = this.getDaySeed() + this.difficultySelect.value;
     const rng = this.seededRandom(seed);
     const pattern = [];
     for (let i = 0; i < this.gridSize * this.gridSize; i++) {
@@ -58,6 +79,10 @@ class ColorPuzzle {
     this.grid.innerHTML = "";
     this.tiles = [];
 
+    // 🔧 Dynamic grid layout
+    this.grid.style.gridTemplateColumns = `repeat(${this.gridSize}, 60px)`;
+    this.grid.style.gridTemplateRows = `repeat(${this.gridSize}, 60px)`;
+
     for (let i = 0; i < this.gridSize * this.gridSize; i++) {
       const tile = document.createElement("div");
       tile.className = "puzzle-tile";
@@ -78,6 +103,11 @@ class ColorPuzzle {
 
   renderTargetPattern() {
     this.targetGrid.innerHTML = "";
+
+    // 🔧 Dynamic target grid layout
+    this.targetGrid.style.gridTemplateColumns = `repeat(${this.gridSize}, 60px)`;
+    this.targetGrid.style.gridTemplateRows = `repeat(${this.gridSize}, 60px)`;
+
     this.targetPattern.forEach((color) => {
       const tile = document.createElement("div");
       tile.className = "tile";
@@ -181,9 +211,10 @@ class ColorPuzzle {
       if (msg.type === "updateLeaderboard") {
         const scores = msg.data.topScores;
         this.leaderboard.innerHTML = "";
-        scores.forEach((entry) => {
+        scores.forEach((entry, index) => {
           const li = document.createElement("li");
-          li.textContent = `${entry.username}: ${entry.moves} moves`;
+          const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🎮";
+          li.textContent = `${medal} ${entry.username}: ${entry.moves} moves`;
           this.leaderboard.appendChild(li);
         });
       }
