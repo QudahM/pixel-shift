@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta charset="UTF-8" />
+    <title>Pixel Shift Daily Puzzle</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Pixel Shift Daily Puzzle</h1>
+    <p>Rearrange the colored tiles to match the original pattern in the fewest moves!</p>
+
+    <div class="grid-wrapper">
+      <div class="grid-box">
+        <h3>🎯 Target Pattern</h3>
+        <div id="target-grid" class="target-grid"></div>
+      </div>
+
+      <div class="grid-box">
+        <h3>🧩 Your Puzzle</h3>
+        <div class="puzzle-container">
+          <div id="puzzle-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-container">
+      <button id="shuffle-btn">🔄 Shuffle</button>
+      <button id="submit-btn">✅ Submit</button>
+    </div>
+
+    <h3>Moves: <span id="move-count">0</span></h3>
+
+    <h3>🏆 Fastest Solvers:</h3>
+    <ul id="leaderboard"></ul>
+
+    <script type="application/javascript" src="script.js"></script>
+  </body>
+</html>
