@@ -1,6 +1,6 @@
+import './createPost.js';
 import { Devvit, useState, useWebView } from '@devvit/public-api';
-import type { DevvitMessage, WebViewMessage } from './message.ts';
-
+import type { DevvitMessage, WebViewMessage } from './message.js';
 
 Devvit.configure({
   redditAPI: true,
