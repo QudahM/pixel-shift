@@ -1,13 +1,13 @@
 class ColorPuzzle {
   constructor() {
     this.difficultySelect = document.getElementById("difficulty");
-
     this.grid = document.getElementById("puzzle-grid");
     this.targetGrid = document.getElementById("target-grid");
     this.moveCounter = document.getElementById("move-count");
     this.shuffleBtn = document.getElementById("shuffle-btn");
     this.submitBtn = document.getElementById("submit-btn");
     this.leaderboard = document.getElementById("leaderboard");
+    this.completionStatus = document.getElementById("completion-status");
 
     this.difficultySelect.addEventListener("change", () => this.applyDifficulty());
 
@@ -16,12 +16,12 @@ class ColorPuzzle {
 
     this.applyDifficulty();
     this.bindEvents();
-    this.listenForLeaderboardUpdates();
   }
 
   applyDifficulty() {
     const mode = this.difficultySelect.value;
     localStorage.setItem("difficulty", mode);
+    this.completionStatus.style.display = "none";
 
     if (mode === "easy") {
       this.gridSize = 3;
@@ -42,16 +42,12 @@ class ColorPuzzle {
     this.buildGrid();
     this.renderTargetPattern();
     this.shuffleTiles();
-  }
+    this.loadLeaderboard();
 
-  loadDailyPattern() {
-    const seed = this.getDaySeed() + this.difficultySelect.value;
-    const rng = this.seededRandom(seed);
-    const pattern = [];
-    for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-      pattern.push(this.colors[Math.floor(rng() * this.colors.length)]);
+    const key = `completed_${this.getDaySeed()}_${mode}`;
+    if (localStorage.getItem(key)) {
+      this.completionStatus.style.display = "block";
     }
-    return pattern;
   }
 
   getDaySeed() {
@@ -75,11 +71,20 @@ class ColorPuzzle {
     };
   }
 
+  loadDailyPattern() {
+    const seed = this.getDaySeed() + this.difficultySelect.value;
+    const rng = this.seededRandom(seed);
+    const pattern = [];
+    for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+      pattern.push(this.colors[Math.floor(rng() * this.colors.length)]);
+    }
+    return pattern;
+  }
+
   buildGrid() {
     this.grid.innerHTML = "";
     this.tiles = [];
 
-    // 🔧 Dynamic grid layout
     this.grid.style.gridTemplateColumns = `repeat(${this.gridSize}, 60px)`;
     this.grid.style.gridTemplateRows = `repeat(${this.gridSize}, 60px)`;
 
@@ -103,8 +108,6 @@ class ColorPuzzle {
 
   renderTargetPattern() {
     this.targetGrid.innerHTML = "";
-
-    // 🔧 Dynamic target grid layout
     this.targetGrid.style.gridTemplateColumns = `repeat(${this.gridSize}, 60px)`;
     this.targetGrid.style.gridTemplateRows = `repeat(${this.gridSize}, 60px)`;
 
@@ -172,7 +175,10 @@ class ColorPuzzle {
 
     if (isWin) {
       this.triggerWinEffect();
-      this.sendScoreToDevvit();
+      this.saveToLeaderboard();
+      const key = `completed_${this.getDaySeed()}_${this.difficultySelect.value}`;
+      localStorage.setItem(key, "true");
+      this.completionStatus.style.display = "block";
     } else {
       alert("❌ Not yet! Keep trying.");
     }
@@ -190,34 +196,35 @@ class ColorPuzzle {
     }, 2000);
   }
 
-  sendScoreToDevvit() {
-    window.parent.postMessage(
-      {
-        type: "devvit-message",
-        message: {
-          type: "submitScore",
-          data: { moves: this.moveCount }
-        }
-      },
-      "*"
-    );
+  saveToLeaderboard() {
+    const difficulty = this.difficultySelect.value;
+    const dateKey = this.getDaySeed();
+    const key = `leaderboard_${difficulty}_${dateKey}`;
+    const stored = JSON.parse(localStorage.getItem(key)) || [];
+
+    stored.push({ moves: this.moveCount, date: new Date().toISOString() });
+    stored.sort((a, b) => a.moves - b.moves);
+    const top5 = stored.slice(0, 5);
+    localStorage.setItem(key, JSON.stringify(top5));
+    this.renderLeaderboard(top5);
   }
 
-  listenForLeaderboardUpdates() {
-    window.addEventListener("message", (event) => {
-      if (!event.data || !event.data.message) return;
+  loadLeaderboard() {
+    const difficulty = this.difficultySelect.value;
+    const dateKey = this.getDaySeed();
+    const key = `leaderboard_${difficulty}_${dateKey}`;
+    const stored = JSON.parse(localStorage.getItem(key)) || [];
+    this.renderLeaderboard(stored);
+  }
 
-      const msg = event.data.message;
-      if (msg.type === "updateLeaderboard") {
-        const scores = msg.data.topScores;
-        this.leaderboard.innerHTML = "";
-        scores.forEach((entry, index) => {
-          const li = document.createElement("li");
-          const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🎮";
-          li.textContent = `${medal} ${entry.username}: ${entry.moves} moves`;
-          this.leaderboard.appendChild(li);
-        });
-      }
+  renderLeaderboard(entries) {
+    this.leaderboard.innerHTML = "";
+    entries.forEach((entry, index) => {
+      const li = document.createElement("li");
+      const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🎮";
+      const date = new Date(entry.date).toLocaleDateString();
+      li.textContent = `${medal} ${entry.moves} moves (${date})`;
+      this.leaderboard.appendChild(li);
     });
   }
 }
