@@ -4,7 +4,7 @@ class ColorPuzzle {
   constructor() {
     this.gridSize = 4;
     this.colors = ["red", "blue", "yellow"];
-    this.targetPattern = this.generatePattern();
+    this.targetPattern = this.loadDailyPattern();
     this.currentPattern = [...this.targetPattern];
     this.selectedTile = null;
     this.moveCount = 0;
@@ -23,12 +23,35 @@ class ColorPuzzle {
     this.listenForLeaderboardUpdates();
   }
 
-  generatePattern() {
+  loadDailyPattern() {
+    const seed = this.getDaySeed();
+    const rng = this.seededRandom(seed);
     const pattern = [];
     for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-      pattern.push(this.colors[i % this.colors.length]);
+      pattern.push(this.colors[Math.floor(rng() * this.colors.length)]);
     }
     return pattern;
+  }
+
+  getDaySeed() {
+    const now = new Date();
+    return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+  }
+
+  seededRandom(seed) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < seed.length; i++) {
+      h ^= seed.charCodeAt(i);
+      h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+    }
+    return function () {
+      h += h << 13;
+      h ^= h >>> 7;
+      h += h << 3;
+      h ^= h >>> 17;
+      h += h << 5;
+      return ((h >>> 0) / 4294967295);
+    };
   }
 
   buildGrid() {

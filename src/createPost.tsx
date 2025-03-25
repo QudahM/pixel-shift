@@ -1,23 +1,35 @@
 import { Devvit } from '@devvit/public-api';
 
-// Adds a new menu item to the subreddit allowing to create a new post
 Devvit.addMenuItem({
-  label: 'Create New Devvit Post (with Web View)',
+  label: 'Create Daily Pixel Puzzle Post',
   location: 'subreddit',
   onPress: async (_event, context) => {
     const { reddit, ui } = context;
     const subreddit = await reddit.getCurrentSubreddit();
+
     const post = await reddit.submitPost({
-      title: 'Web View Example',
+      title: '🧠 Pixel Shift Daily Puzzle – Can You Solve It Today?',
       subredditName: subreddit.name,
-      // The preview appears while the post loads
       preview: (
-        <vstack height="100%" width="100%" alignment="middle center">
-          <text size="large">Loading Puzzle...</text>
+        <vstack padding="medium" gap="medium" alignment="middle center">
+          <text size="xlarge" weight="bold" color="brand">
+            🎯 Today’s Puzzle is Live!
+          </text>
+          <text size="medium" alignment="center">
+            Rearrange the colored tiles to match the target pattern in the fewest moves.
+          </text>
+          <hstack gap="small" alignment="center middle">
+            <text size="small" color="muted">🏁 Fastest Time Wins</text>
+            <text size="small" color="muted">🔄 New Grid Every Day</text>
+          </hstack>
+          <text size="xsmall" color="muted">
+            Click "Start Puzzle" below to begin ⬇️
+          </text>
         </vstack>
       ),
     });
-    ui.showToast({ text: 'Created post!' });
+
+    ui.showToast({ text: '🧩 Puzzle post created!' });
     ui.navigateTo(post);
   },
 });
