@@ -22,6 +22,12 @@
         <option value="hard">🔴 Hard</option>
       </select>
     </div>
+    
+    <div class="timer-container">
+      <span class="timer-icon">⏱️</span>
+      <span>Time:</span>
+      <span id="timer" class="timer-text">0:00</span>
+    </div>      
 
     <div class="grid-wrapper">
       <div class="grid-box">
@@ -47,7 +53,7 @@
     <!-- ✅ Persistent Puzzle Completion Status Message -->
     <h3 id="completion-status" class="completion-status">✅ You've completed today's puzzle!</h3>
 
-    <h3>🏆 Fastest Solvers:</h3>
+    <h3>🏆 Least Moves to Solve:</h3>
     <ul id="leaderboard"></ul>
 
     <script type="application/javascript" src="script.js"></script>

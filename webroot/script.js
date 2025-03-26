@@ -8,6 +8,9 @@ class ColorPuzzle {
     this.submitBtn = document.getElementById("submit-btn");
     this.leaderboard = document.getElementById("leaderboard");
     this.completionStatus = document.getElementById("completion-status");
+    this.timerDisplay = document.getElementById("timer");
+    this.startTime = null;
+    this.timerInterval = null;
 
     this.difficultySelect.addEventListener("change", () => this.applyDifficulty());
 
@@ -22,6 +25,7 @@ class ColorPuzzle {
     const mode = this.difficultySelect.value;
     localStorage.setItem("difficulty", mode);
     this.completionStatus.style.display = "none";
+    this.grid.classList.remove("glow", "glow-fade");
 
     if (mode === "easy") {
       this.gridSize = 3;
@@ -43,6 +47,11 @@ class ColorPuzzle {
     this.renderTargetPattern();
     this.shuffleTiles();
     this.loadLeaderboard();
+
+    this.timerDisplay.textContent = "0:00";
+    this.startTime = null;
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
 
     const key = `completed_${this.getDaySeed()}_${mode}`;
     if (localStorage.getItem(key)) {
@@ -130,26 +139,56 @@ class ColorPuzzle {
     this.moveCount = 0;
     this.moveCounter.textContent = this.moveCount;
     this.renderTiles();
+    this.timerDisplay.textContent = "0:00";
+    this.startTime = null;
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
   }
 
   handleTileClick(index) {
     if (this.selectedTile === null) {
       this.selectedTile = index;
       this.tiles[index].classList.add("selected");
+
+      if (!this.startTime) {
+        this.startTime = Date.now();
+        this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+      }
     } else {
       if (index !== this.selectedTile && this.areAdjacent(index, this.selectedTile)) {
+        const tileA = this.tiles[this.selectedTile];
+        const tileB = this.tiles[index];
+        tileA.classList.add("swap-animation");
+        tileB.classList.add("swap-animation");
+
         [this.currentPattern[this.selectedTile], this.currentPattern[index]] = [
           this.currentPattern[index],
           this.currentPattern[this.selectedTile],
         ];
+
         this.moveCount++;
         this.moveCounter.textContent = this.moveCount;
+
+        this.renderTiles();
+
+        setTimeout(() => {
+          tileA.classList.remove("swap-animation");
+          tileB.classList.remove("swap-animation");
+        }, 250);
       }
+
       this.tiles[this.selectedTile].classList.remove("selected");
       this.selectedTile = null;
-      this.renderTiles();
     }
   }
+
+  updateTimer() {
+    if (!this.startTime) return;
+    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    this.timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }  
 
   areAdjacent(i1, i2) {
     const row1 = Math.floor(i1 / this.gridSize);
@@ -164,7 +203,10 @@ class ColorPuzzle {
   }
 
   bindEvents() {
-    this.shuffleBtn.addEventListener("click", () => this.shuffleTiles());
+    this.shuffleBtn.addEventListener("click", () => {
+      this.grid.classList.remove("glow", "glow-fade");
+      this.shuffleTiles();
+    });
     this.submitBtn.addEventListener("click", () => this.checkWin());
   }
 
@@ -174,6 +216,10 @@ class ColorPuzzle {
     );
 
     if (isWin) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+      this.updateTimer();
+
       this.triggerWinEffect();
       this.saveToLeaderboard();
       const key = `completed_${this.getDaySeed()}_${this.difficultySelect.value}`;
@@ -190,10 +236,16 @@ class ColorPuzzle {
     overlay.innerHTML = `<div class="win-message">🎉 You solved it in ${this.moveCount} moves!</div>`;
     document.body.appendChild(overlay);
 
+    this.grid.classList.add("glow");
+
     setTimeout(() => {
       overlay.classList.add("fade-out");
-      setTimeout(() => overlay.remove(), 1000);
+      overlay.addEventListener("transitionend", () => overlay.remove(), { once: true });
     }, 2000);
+
+    setTimeout(() => {
+      this.grid.classList.add("glow-fade");
+    }, 4000);
   }
 
   saveToLeaderboard() {
