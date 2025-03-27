@@ -90,3 +90,9 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 ## 📣 Credits
 
  - Inspired by classic sliding tile puzzles and daily challenge games like Wordle.
+
+---
+
+## 📜 License
+
+[MIT License](https://opensource.org/licenses/MIT). Feel free to fork, remix, and expand the puzzle.
