@@ -1,4 +1,4 @@
-# 🧩 Pixel Shift – Daily Puzzle Game
+# Pixel Shift – Daily Puzzle Game
 
 **Pixel Shift** is a web-based daily puzzle game built with [Devvit](https://developers.reddit.com/), where players rearrange colored tiles to match a target pattern in the fewest number of moves possible.
 
@@ -6,13 +6,13 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## 🔗 Live Test Post
+## Live Test Post
 
-👉 [View test post on r/Pixel0Shift](https://www.reddit.com/r/Pixel0Shift/)  
+ [View test post on r/Pixel0Shift](https://www.reddit.com/r/Pixel0Shift/)  
 
 ---
 
-## 📖 Tutorial
+## Tutorial
 
 1. **Start the Puzzle**
    - Head to the [daily puzzle post](https://www.reddit.com/r/Pixel0Shift/).
@@ -43,7 +43,7 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## 🎮 How It Works
+## How It Works
 
 - Each day, a new target color grid is generated based on the current date and difficulty.
 - The player grid is shuffled and must be rearranged using adjacent swaps to match the target.
@@ -55,18 +55,18 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## 📦 Features
+## Features
 
-- ✅ **Daily Puzzle**: New color layout every 24 hours based on date seed
-- ✅ **Three Difficulty Levels**: Tweak complexity based on skill
-- ✅ **Leaderboard**: Tracks and displays your personal bests 
-- ✅ **Timer**: Tracks how long it takes to solve each puzzle
-- ✅ **Animations & Effects**: Smooth swap transitions and win visuals
-- ✅ **Zero Setup**: Launches instantly from a Reddit post using Devvit
+- **Daily Puzzle**: New color layout every 24 hours based on date seed.
+- **Three Difficulty Levels**: Tweak complexity based on skill.
+- **Leaderboard**: Tracks and displays your personal bests.
+- **Timer**: Tracks how long it takes to solve each puzzle.
+- **Animations & Effects**: Smooth swap transitions and win visuals.
+- **Zero Setup**: Launches instantly from a Reddit post using Devvit.
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 | Technology   | Use |
 |--------------|-----|
@@ -78,7 +78,7 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## 🧠 Leaderboard & State Handling
+## Leaderboard & State Handling
 
 - Upon completing a puzzle, the player's move count and date are recorded for the selected difficulty.
 - If the new score is better than their previous best, it replaces the old one.
@@ -87,12 +87,12 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## 📣 Credits
+## Credits
 
  - Inspired by classic sliding tile puzzles and daily challenge games like Wordle.
 
 ---
 
-## 📜 License
+## License
 
 [MIT License](https://opensource.org/licenses/MIT). Feel free to fork, remix, and expand the puzzle.
