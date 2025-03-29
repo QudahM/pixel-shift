@@ -12,6 +12,18 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
+## How It Works
+
+- Each day, a new target color grid is generated based on the current date and difficulty.
+- The player grid is shuffled and must be rearranged using adjacent swaps to match the target.
+- The player can select from three difficulty levels:
+  - 🟢 Easy (3x3, 2 colors)
+  - 🟡 Medium (4x4, 3 colors)
+  - 🔴 Hard (5x5, 4 colors)
+- Each player strives for **the fewest moves**, with scores stored privately per user through Devvit Redis.
+
+---
+
 ## Tutorial
 
 1. **Start the Puzzle**
@@ -43,18 +55,6 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 
 ---
 
-## How It Works
-
-- Each day, a new target color grid is generated based on the current date and difficulty.
-- The player grid is shuffled and must be rearranged using adjacent swaps to match the target.
-- The player can select from three difficulty levels:
-  - 🟢 Easy (3x3, 2 colors)
-  - 🟡 Medium (4x4, 3 colors)
-  - 🔴 Hard (5x5, 4 colors)
-- Each player strives for **the fewest moves**, with scores stored privately per user through Devvit Redis.
-
----
-
 ## Features
 
 - **Daily Puzzle**: New color layout every 24 hours based on date seed.
@@ -75,15 +75,6 @@ Each day presents a new randomized challenge with selectable difficulty levels. 
 | **WebView**   | Interactive UI with HTML/CSS/JS |
 | **TypeScript + JSX** | Devvit UI logic & communication |
 | **HTML/CSS/JS** | Frontend puzzle game |
-
----
-
-## Leaderboard & State Handling
-
-- Upon completing a puzzle, the player's move count and date are recorded for the selected difficulty.
-- If the new score is better than their previous best, it replaces the old one.
-- The **Top 5 scores** are displayed in a public leaderboard via the WebView interface.
-- Puzzle completion status and selected difficulty are stored locally using `localStorage`.
 
 ---
 
